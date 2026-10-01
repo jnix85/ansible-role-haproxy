@@ -1,0 +1,9 @@
+#!/bin/bash
+# {{ ansible_managed }}
+if [ "$RENEWED_LINEAGE" = "{{ haproxy_certbot_live_dir }}" ] || [ -z "$RENEWED_LINEAGE" ]; then
+    cat "{{ haproxy_certbot_live_dir }}/fullchain.pem" \
+        "{{ haproxy_certbot_live_dir }}/privkey.pem" \
+        > "{{ haproxy_ssl_cert_path }}"
+    chmod 600 "{{ haproxy_ssl_cert_path }}"
+    systemctl reload haproxy
+fi

@@ -1,0 +1,16 @@
+---
+# tasks file for ansible-role-haproxy
+
+- name: Include package installation tasks
+  ansible.builtin.include_tasks: install.yml
+
+- name: Include certbot deploy hook tasks
+  ansible.builtin.include_tasks: certbot.yml
+  when: haproxy_certbot_enabled
+
+- name: Include HAProxy configuration tasks
+  ansible.builtin.include_tasks: configure.yml
+
+- name: Include Keepalived VRRP tasks
+  ansible.builtin.include_tasks: keepalived.yml
+  when: haproxy_keepalived_enabled

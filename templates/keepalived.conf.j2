@@ -1,0 +1,31 @@
+# {{ ansible_managed }}
+global_defs {
+    router_id haproxy_node_{{ haproxy_keepalived_priority }}
+}
+
+vrrp_script chk_haproxy {
+    script "killall -0 haproxy"
+    interval 2
+    weight 2
+}
+
+vrrp_instance VI_1 {
+    state {{ haproxy_keepalived_role }}
+    interface {{ haproxy_keepalived_interface }}
+    virtual_router_id {{ haproxy_keepalived_router_id }}
+    priority {{ haproxy_keepalived_priority }}
+    advert_int 1
+
+    authentication {
+        auth_type PASS
+        auth_pass {{ haproxy_keepalived_password }}
+    }
+
+    virtual_ipaddress {
+        {{ haproxy_keepalived_vip }}
+    }
+
+    track_script {
+        chk_haproxy
+    }
+}

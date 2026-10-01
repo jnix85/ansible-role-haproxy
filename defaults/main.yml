@@ -1,0 +1,58 @@
+---
+# defaults file for ansible-role-haproxy
+
+# Global & Default Settings
+haproxy_user: haproxy
+haproxy_group: haproxy
+haproxy_global_maxconn: 50000
+haproxy_timeout_connect: 5000ms
+haproxy_timeout_client: 50000ms
+haproxy_timeout_server: 50000ms
+haproxy_timeout_tunnel: 1h
+
+# Proxy Mode: "http" (TLS termination)
+haproxy_mode: "http"
+
+# Frontend Settings
+haproxy_frontend_domain: "proxmox.pve.infra.clawduino.com"
+haproxy_frontend_port: 8006
+haproxy_ssl_certs_dir: "/etc/haproxy/certs"
+haproxy_ssl_cert_path: "/etc/haproxy/certs/proxmox.pve.infra.clawduino.pem"
+
+# Certbot Deploy Hook
+haproxy_certbot_enabled: true
+haproxy_certbot_live_dir: "/etc/letsencrypt/live/proxmox.pve.infra.clawduino.com"
+
+# Prometheus Exporter Settings
+haproxy_prometheus_exporter_enabled: true
+haproxy_prometheus_port: 8404
+haproxy_prometheus_metrics_path: "/metrics"
+haproxy_stats_uri: "/stats"
+
+# Keepalived / VRRP High Availability Settings (Disabled for single-node deployments)
+haproxy_keepalived_enabled: false
+haproxy_keepalived_interface: "eth0"
+haproxy_keepalived_router_id: 51
+haproxy_keepalived_vip: "10.1.0.137/23"
+haproxy_keepalived_role: "MASTER"
+haproxy_keepalived_priority: 101
+haproxy_keepalived_password: "haproxy_vrrp_secret"
+
+# Backend Proxmox VE Nodes
+haproxy_backend_name: "proxmox_cluster"
+haproxy_backend_servers:
+  - name: pve01
+    ip: 10.24.0.10
+    port: 8006
+  - name: pve02
+    ip: 10.24.0.11
+    port: 8006
+  - name: pve03
+    ip: 10.24.0.12
+    port: 8006
+  - name: pve04
+    ip: 10.24.0.13
+    port: 8006
+  - name: pve05
+    ip: 10.24.0.14
+    port: 8006

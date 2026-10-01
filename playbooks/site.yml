@@ -1,0 +1,6 @@
+---
+- name: Deploy HAProxy Load Balancer & Keepalived VRRP
+  hosts: haproxy_nodes
+  become: true
+  roles:
+    - role: "{{ playbook_dir }}/.."

@@ -1,0 +1,30 @@
+---
+- name: Ensure renewal hooks deploy directory exists
+  ansible.builtin.file:
+    path: /etc/letsencrypt/renewal-hooks/deploy
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Deploy Certbot HAProxy concatenation renewal hook
+  ansible.builtin.template:
+    src: haproxy-deploy-hook.sh.j2
+    dest: /etc/letsencrypt/renewal-hooks/deploy/haproxy-deploy-hook.sh
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Check if Certbot fullchain certificate exists
+  ansible.builtin.stat:
+    path: "{{ haproxy_certbot_live_dir }}/fullchain.pem"
+  register: certbot_fullchain
+
+- name: Combine Certbot fullchain and privkey into HAProxy PEM
+  ansible.builtin.shell: |
+    cat "{{ haproxy_certbot_live_dir }}/fullchain.pem" \
+        "{{ haproxy_certbot_live_dir }}/privkey.pem" \
+        > "{{ haproxy_ssl_cert_path }}"
+    chmod 600 "{{ haproxy_ssl_cert_path }}"
+  when: certbot_fullchain.stat.exists
+  notify: reload haproxy

@@ -1,0 +1,17 @@
+---
+- name: Install HAProxy and dependency packages
+  ansible.builtin.apt:
+    name:
+      - haproxy
+      - certbot
+      - psmisc
+    state: present
+    update_cache: true
+
+- name: Ensure HAProxy certs directory exists
+  ansible.builtin.file:
+    path: "{{ haproxy_ssl_certs_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'

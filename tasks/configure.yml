@@ -1,0 +1,28 @@
+---
+- name: Ensure haproxy certs directory exists
+  ansible.builtin.file:
+    path: "{{ haproxy_ssl_certs_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Deploy HAProxy configuration file
+  ansible.builtin.template:
+    src: haproxy.cfg.j2
+    dest: /etc/haproxy/haproxy.cfg
+    owner: root
+    group: root
+    mode: '0644'
+  notify: restart haproxy
+
+- name: Validate HAProxy configuration file
+  ansible.builtin.command:
+    cmd: haproxy -c -f /etc/haproxy/haproxy.cfg
+  changed_when: false
+
+- name: Ensure HAProxy service is started and enabled
+  ansible.builtin.service:
+    name: haproxy
+    state: started
+    enabled: true
